@@ -13,16 +13,18 @@ const zhishiku =
   'https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/plugin/jksyfhq8pi9fbd8a/';
 const chat =
   'https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions';
+const haoka =
+  'https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/plugin/pb1xvfb7n5rar004/';
 
 const Home: NextPage = () => {
   const [loading, setLoading] = useState(false);
   const [desc, setDesc] = useState('联通号码，月租29元，流量多点。');
-  const [generatedDescs, setGeneratedDescs] = useState<string>('');
+  const [generatedDescs, setGeneratedDescs] = useState<string>('啊啊是');
   const [token, setToken] = useState('');
   const defultDesc = '比如：联通号码，月租29元，流量多点。';
 
   useEffect(() => {
-    if (!token) getToken();
+    // if (!token) getToken();
   }, []);
   const getToken = async () => {
     const result = await fetch('/api/getAccessToken');
@@ -32,7 +34,25 @@ const Home: NextPage = () => {
   const generatedData = (e: any) => {
     e.preventDefault();
     setGeneratedDescs('');
-    phoneCardModel();
+    // haokaModel();
+  };
+  const haokaModel = async () => {
+    setLoading(true);
+    const response = await fetch(`${haoka}?access_token=${token}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: desc,
+        plugins: ['uuid-zhishiku'],
+        // stream: true,
+      }),
+    });
+
+    const result = await response.json();
+    setGeneratedDescs(result.result);
+    setLoading(false);
   };
   const phoneCardModel = async () => {
     setLoading(true);
@@ -95,6 +115,7 @@ const Home: NextPage = () => {
 
     setLoading(false);
   };
+  const getInfo = async () => {};
 
   return (
     <div className='flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen'>

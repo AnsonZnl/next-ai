@@ -41,4 +41,4 @@ robots.txt
 sitemap.xml
 sitemap-*.xml
 
-/public/source/
+/src/config/
