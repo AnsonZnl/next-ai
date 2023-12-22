@@ -19,7 +19,7 @@ const haoka =
 const Home: NextPage = () => {
   const [loading, setLoading] = useState(false);
   const [desc, setDesc] = useState('联通号码，月租29元，流量多点。');
-  const [generatedDescs, setGeneratedDescs] = useState<string>('啊啊是');
+  const [generatedDescs, setGeneratedDescs] = useState<string>('');
   const [token, setToken] = useState('');
   const defultDesc = '比如：联通号码，月租29元，流量多点。';
 
@@ -34,7 +34,7 @@ const Home: NextPage = () => {
   const generatedData = (e: any) => {
     e.preventDefault();
     setGeneratedDescs('');
-    // haokaModel();
+    getInfo();
   };
   const haokaModel = async () => {
     setLoading(true);
@@ -115,7 +115,23 @@ const Home: NextPage = () => {
 
     setLoading(false);
   };
-  const getInfo = async () => {};
+  const getInfo = async () => {
+    setLoading(true);
+    const response = await fetch(`/api/getOneHaoka`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: desc,
+      }),
+    });
+
+    const result = await response.json();
+    console.log('result', result);
+    setGeneratedDescs(result.data);
+    setLoading(false);
+  };
 
   return (
     <div className='flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen'>
@@ -165,26 +181,23 @@ const Home: NextPage = () => {
           toastOptions={{ duration: 2000 }}
         />
         <hr className='h-px bg-gray-700 border-1 dark:bg-gray-700' />
-        <ResizablePanel>
-          <AnimatePresence mode='wait'>
-            <motion.div className='space-y-10 my-4'>
-              {generatedDescs && (
-                <>
-                  {/* <div>
+
+        <div className='space-y-10 my-4'>
+          {generatedDescs && (
+            <>
+              {/* <div>
                     <h2 className="sm:text-4xl text-3xl font-bold text-slate-900 mx-auto">Your generated email</h2>
                   </div> */}
-                  <div className='space-y-8 flex flex-col items-center justify-center max-w-xl mx-auto  whitespace-pre-wrap'>
-                    <div className='bg-white rounded-xl shadow-md p-4  '>
-                      <div
-                        dangerouslySetInnerHTML={{ __html: generatedDescs }}
-                      ></div>
-                    </div>
-                  </div>
-                </>
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </ResizablePanel>
+              <div className='space-y-8 flex flex-col items-center justify-center max-w-xl mx-auto  whitespace-pre-wrap'>
+                <div className='bg-white rounded-xl shadow-md p-4 text-left '>
+                  <div
+                    dangerouslySetInnerHTML={{ __html: generatedDescs }}
+                  ></div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </main>
       <Footer />
     </div>
